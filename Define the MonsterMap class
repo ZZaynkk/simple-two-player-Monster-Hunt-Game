@@ -1,0 +1,62 @@
+Intro:
+Create a class named MonsterMap that manages the game. This class is responsible for storing the list of monsters, running the game loop, and determining the winner.
+
+Attributes:
+self.catcher1: the first player (an instance of the Catcher class)
+self.catcher2: the second player (an instance of the Catcher class)
+self.monsters: a list that stores all the Monster objects added to the game
+Methods:
+__init__(self, catcher1, catcher2): initializes the two catchers and an empty list of monsters.
+add_monster(self, monster): adds a Monster object to the list of monsters.
+has_remaining_monsters(self): returns True if there is at least one uncaptured monster left; otherwise, returns False.
+play_game(self): runs the game loop where the two catchers take turns catching the nearest uncaptured monster.
+Print the initial status of both catchers and all monsters.
+While uncaptured monsters remain, alternate turns between catcher1 and catcher2.
+On a player’s turn:
+Use get_nearest_monster() to find the nearest uncaptured monster.
+If a monster is found, the catcher moves to and captures it.
+Print a message like: "Alice caught a 7-energy monster"
+announce_winner(self): determines which catcher has more total energy.
+Print "--- GAME OVER ---"
+If one catcher has more energy, print a message  congratulating the winner, e.g. :
+"Congratulations! The winner is Alice with a total energy of 20."
+If both have the same energy, print:
+"It's a tie!"
+
+code:
+class MonsterMap:
+    def __init__(self, catcher1, catcher2):
+        self.catcher1 = catcher1
+        self.catcher2 = catcher2
+        self.monsters =[]
+    def add_monster(self, monster):
+        self.monsters.append(monster)
+    def has_remaining_monsters(self):
+        for m in self.monsters:
+            if not m.is_captured():
+                return True
+        return False
+    def play_game(self):
+        print(self.catcher1)
+        print(self.catcher2)
+        for m in self.monsters:
+            print(m)
+        turn = 0
+        while self.has_remaining_monsters():
+            if turn == 0:
+                current = self.catcher1
+            else:
+                current = self.catcher2
+            nearest = current.get_nearest_monster(self.monsters)
+            if nearest:
+                current.catch_monster(nearest)
+                print(f"{current.name} caught a {nearest.energy}-energy monster")
+            turn = 1 - turn
+    def announce_winner(self):
+        print("--- GAME OVER ---")
+        if self.catcher1.energy > self.catcher2.energy:
+            print(f"Congratulations! The winner is {self.catcher1.name} with a total energy of {self.catcher1.energy}.")
+        elif self.catcher2.energy > self.catcher1.energy:
+            print(f"Congratulations! The winner is {self.catcher2.name} with a total energy of {self.catcher2.energy}.")
+        else:
+            print("It's a tie!")
