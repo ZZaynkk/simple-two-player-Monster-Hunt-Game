@@ -1,0 +1,47 @@
+Intro:
+Create a class named Catcher to represent a player trying to catch monsters.
+
+Attributes:
+self.name: a string representing the catcher's name. The default value is "Unknown".
+self.energy: total accumulated energy (starts at 0)
+self.x, self.y: current position on the grid (start at (0, 0))
+self.caught_monsters: a list of monsters that have been captured
+Methods:
+__str__(self): returns a string representation, e.g.
+"Catcher Alice: energy = 15, collected 3 monster(s)"
+get_nearest_monster(self, monsters): 
+returns the nearest uncaptured monster from the list monsters, 
+returns None if there are no uncaptured monsters in the list.
+move_to(self, monster): updates the catcher's position to the monster’s position.
+catch_monster(self, monster): moves to the monster’s location, marks it as captured, adds its energy to the catcher’s total, and appends it to caught_monsters.
+
+code:
+class Catcher:
+    def __init__(self, name = "Unknown"):
+        self.name = name
+        self.energy = 0
+        self.x =0
+        self.y = 0
+        self.caught_monsters = []
+    def __str__(self):
+        return f"Catcher {self.name}: energy = {self.energy}, collected {len(self.caught_monsters)} monster(s)"
+    def get_nearest_monster(self, monsters):
+        nearest = None
+        best_dist = None
+        for m in monsters:
+            if not m.is_captured():
+                d = m.distance_to(self.x, self.y)
+                if best_dist is None or d < best_dist:
+                    best_dist = d
+                    nearest = m
+        return nearest
+    def move_to(self, monster):
+        self.x = monster.x
+        self.y = monster.y
+    def catch_monster(self, monster):
+        if monster.is_captured():
+            return
+        self.move_to(monster)
+        monster.set_capture_on()
+        self.energy += monster.energy
+        self.caught_monsters.append(monster)
