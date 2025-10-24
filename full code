@@ -1,0 +1,136 @@
+Intro:
+Write a function called main() to start and run the game. This function will set up the players, generate the monsters, and start the game using the MonsterMap class.
+
+Begin by copying the three classes created in Q1–Q3 into the bottom of the answer box.
+
+Instructions:
+
+Display a welcome message: "Welcome to the Monster Hunt Game!"
+Prompt both players to enter their names
+Prompt the user to enter the number of monsters to generate
+Create two Catcher objects using the names provided.
+Create a MonsterMap object named 'game' with the two catchers.
+Use a loop to generate the specified number of monsters:
+Each monster should have:
+a random x coordinate between 0 and 9
+a random y coordinate between 0 and 9
+a random energy value between 0 and 9
+Use game.add_monster(...) to add each monster.
+After all monsters are added:
+Call game.play_game() to begin the game.
+Call game.announce_winner() to show the result.
+Note: 
+
+Use rand = random.Random(30) to ensure reproducible randomness.
+Use rand.randrange(n) to generate a random integer from 0 up to but not including n.
+
+
+code:
+class Monster:
+    def __init__(self, x =0, y = 0, energy = 1):
+        self.x = x
+        self.y = y
+        self.energy = energy
+        self.captured = False
+    def distance_to(self, x2, y2):
+        dx = x2 - self.x
+        dy = y2 - self.y
+        return round((dx * dx + dy * dy) ** 0.5)
+    def set_capture_on(self):
+        self.captured = True
+    def is_captured(self):
+        return self.captured
+    def __str__(self):
+        if self.captured:
+            return "Monster captured"
+        return f"Monster at ({self.x}, {self.y}), energy: {self.energy}"
+class Catcher:
+    def __init__(self, name = "Unknown"):
+        self.name = name
+        self.energy = 0
+        self.x =0
+        self.y = 0
+        self.caught_monsters = []
+    def __str__(self):
+        return f"Catcher {self.name}: energy = {self.energy}, collected {len(self.caught_monsters)} monster(s)"
+    def get_nearest_monster(self, monsters):
+        nearest = None
+        best_dist = None
+        for m in monsters:
+            if not m.is_captured():
+                d = m.distance_to(self.x, self.y)
+                if best_dist is None or d < best_dist:
+                    best_dist = d
+                    nearest = m
+        return nearest
+    def move_to(self, monster):
+        self.x = monster.x
+        self.y = monster.y
+    def catch_monster(self, monster):
+        if monster.is_captured():
+            return
+        self.move_to(monster)
+        monster.set_capture_on()
+        self.energy += monster.energy
+        self.caught_monsters.append(monster)
+class MonsterMap:
+    def __init__(self, catcher1, catcher2):
+        self.catcher1 = catcher1
+        self.catcher2 = catcher2
+        self.monsters =[]
+    def add_monster(self, monster):
+        self.monsters.append(monster)
+    def has_remaining_monsters(self):
+        for m in self.monsters:
+            if not m.is_captured():
+                return True
+        return False
+    def play_game(self):
+        print(self.catcher1)
+        print(self.catcher2)
+        for m in self.monsters:
+            print(m)
+        turn = 0
+        while self.has_remaining_monsters():
+            if turn == 0:
+                current = self.catcher1
+            else:
+                current = self.catcher2
+            nearest = current.get_nearest_monster(self.monsters)
+            if nearest:
+                current.catch_monster(nearest)
+                print(f"{current.name} caught a {nearest.energy}-energy monster")
+            turn = 1 - turn
+    def announce_winner(self):
+        print("--- GAME OVER ---")
+        if self.catcher1.energy > self.catcher2.energy:
+            print(f"Congratulations! The winner is {self.catcher1.name} with a total energy of {self.catcher1.energy}.")
+        elif self.catcher2.energy > self.catcher1.energy:
+            print(f"Congratulations! The winner is {self.catcher2.name} with a total energy of {self.catcher2.energy}.")
+        else:
+            print("It's a tie!")
+def _get_monster_count():
+    while True:
+        s = input("Enter the number of monsters (1-10): ")
+        try:
+            n = int(s)
+            if 1<= n <= 10:
+                return n
+        except:
+            pass
+def main():
+    print("Welcome to the Monster Hunt Game!")
+    name1 = input("Enter the name of the first catcher: ")
+    name2 = input("Enter the name of the second catcher: ")
+    n_monsters = _get_monster_count()
+    c1 = Catcher(name1)
+    c2 = Catcher(name2)
+    game = MonsterMap(c1, c2)
+    rand = random.Random(30)
+    for _ in range(n_monsters):
+        x = rand.randrange(10)
+        y = rand.randrange(10)
+        energy = rand.randrange(10)
+        game.add_monster(Monster(x, y, energy))
+    game.play_game()
+    game.announce_winner()
