@@ -1,0 +1,39 @@
+Intro:
+Create a class named Monster that represents a monster on the grid. Each monster has the following attributes and methods:
+
+Attributes:
+self.x: x-coordinate. The default value is 0.
+self.y: y-coordinate. The default value is 0.
+self.energy: energy value provided by the monster when captured. The default value is 1.
+self.captured: boolean indicating whether the monster has been captured. The default value is False.
+Initializer:
+initializes a new monster with position (x, y) and energy energy.
+Methods:
+distance_to(self, x2, y2): returns the Euclidean distance from the monster's position to coordinates (x2, y2), rounded to the nearest integer. The formula is:
+𝑑𝑖𝑠𝑡𝑎𝑛𝑐𝑒=√‾‾‾‾‾‾‾‾‾‾‾‾‾(𝑥2−𝑥1)^2+(𝑦2−𝑦1)^2‾‾‾‾‾‾‾‾‾
+
+set_capture_on(self): sets captured to True.
+is_captured(self): returns True if the monster has already been captured, otherwise False.
+__str__(self): returns a string representation:
+"Monster at (x, y), energy: e" if not captured where (x, y) represents the monster's current position and e represents its current energy value.
+"Monster captured" if captured.
+
+code:
+class Monster:
+    def __init__(self, x =0, y = 0, energy = 1):
+        self.x = x
+        self.y = y
+        self.energy = energy
+        self.captured = False
+    def distance_to(self, x2, y2):
+        dx = x2 - self.x
+        dy = y2 - self.y
+        return round((dx * dx + dy * dy) ** 0.5)
+    def set_capture_on(self):
+        self.captured = True
+    def is_captured(self):
+        return self.captured
+    def __str__(self):
+        if self.captured:
+            return "Monster captured"
+        return f"Monster at ({self.x}, {self.y}), energy: {self.energy}"
